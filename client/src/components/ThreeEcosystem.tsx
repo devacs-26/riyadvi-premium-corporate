@@ -1,0 +1,8 @@
+import { useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Float, OrbitControls } from "@react-three/drei";
+import type { Mesh } from "three";
+
+const crystalPositions: [number, number, number][] = [[-2.3, 1.3, -0.5], [2.2, 1.3, -0.4], [-2.6, -1.2, 0], [2.4, -1.1, -0.4], [0, 2.2, -0.5], [0, -2.1, 0.3], [1.3, -1.9, -0.6], [-1.2, 2, 0.4]];
+function Crystal({ position, index }: { position: [number, number, number]; index: number }) { const ref = useRef<Mesh>(null!); useFrame(state => { if (ref.current) { ref.current.rotation.x = state.clock.elapsedTime * (0.16 + index * 0.01); ref.current.rotation.y = state.clock.elapsedTime * (0.2 + index * 0.015); } }); return <mesh ref={ref} position={position}><octahedronGeometry args={[0.09 + (index % 3) * 0.035, 0]} /><meshStandardMaterial color={index % 2 ? "#e4c45b" : "#8c7626"} emissive="#7b5d0c" emissiveIntensity={1.8} roughness={0.25} metalness={0.8} /></mesh>; }
+export default function ThreeEcosystem() { return <Canvas dpr={[1, 1.5]} camera={{ position: [0, 0, 6.3], fov: 42 }} gl={{ alpha: true, antialias: true }}><ambientLight intensity={0.4} /><pointLight position={[2, 3, 4]} intensity={8} color="#e4c45b" /><pointLight position={[-3, -2, 2]} intensity={5} color="#7f8cff" /><Float speed={1.4} rotationIntensity={0.35} floatIntensity={0.4}><mesh><icosahedronGeometry args={[1.22, 2]} /><meshStandardMaterial color="#191713" emissive="#563f07" emissiveIntensity={0.35} roughness={0.3} metalness={0.9} wireframe /></mesh></Float>{crystalPositions.map((position, index) => <Crystal key={index} position={position} index={index} />)}<OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.7} /></Canvas>; }
